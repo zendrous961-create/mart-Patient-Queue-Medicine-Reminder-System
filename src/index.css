@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1, h2, h3, h4 {
+    @apply font-display text-ink;
+  }
+  :focus-visible {
+    outline: 2px solid #0F7173;
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-card border border-line shadow-card;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-teal-500 text-white hover:bg-teal-600;
+  }
+  .btn-secondary {
+    @apply btn bg-teal-50 text-teal-700 hover:bg-teal-100;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent text-ink hover:bg-black/5;
+  }
+  .btn-danger {
+    @apply btn bg-coral-50 text-coral-600 hover:bg-coral-400 hover:text-white;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-ink/40 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none transition;
+  }
+  .label {
+    @apply block text-xs font-semibold uppercase tracking-wide text-ink/50 mb-1.5;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold;
+  }
+  .badge-waiting { @apply badge bg-amber-50 text-amber-600; }
+  .badge-progress { @apply badge bg-teal-50 text-teal-600; }
+  .badge-completed { @apply badge bg-sage-50 text-sage-600; }
+  .badge-cancelled { @apply badge bg-coral-50 text-coral-600; }
+
+  /* Signature element: the perforated queue ticket stub, echoed
+     across the patient token, the doctor's queue list, and reminders. */
+  .ticket {
+    @apply relative flex bg-white rounded-card shadow-stub overflow-hidden;
+  }
+  .ticket::before,
+  .ticket::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background: #F6F8F8;
+  }
+  .ticket::before {
+    left: -8px;
+  }
+  .ticket::after {
+    right: -8px;
+  }
+  .ticket-perforation {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 6px,
+      #DDE5E4 6px,
+      #DDE5E4 12px
+    );
+    width: 1px;
+  }
+}
