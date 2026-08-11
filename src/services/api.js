@@ -66,16 +66,23 @@ export const auth = {
    */
   async signIn({ email, password }) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) throw new Error('Invalid email or password.')
+    if (error || !data?.user) throw new Error('Invalid email or password.')
 
-    const { data: userRow, error: rowError } = await supabase
+    const { data: userRow } = await supabase
       .from('users')
       .select('*')
       .eq('id', data.user.id)
-      .single()
-    if (rowError) throw new Error(rowError.message)
+      .maybeSingle()
 
-    return userRow
+    if (userRow) return userRow
+
+    // Fallback if public.users row was created in seed or auth metadata
+    return {
+      id: data.user.id,
+      email: data.user.email,
+      name: data.user.user_metadata?.name || 'User',
+      role: data.user.user_metadata?.role || 'patient',
+    }
   },
 
   /**
@@ -98,9 +105,16 @@ export const auth = {
       .from('users')
       .select('*')
       .eq('id', session.user.id)
-      .single()
+      .maybeSingle()
 
-    return userRow || null
+    if (userRow) return userRow
+
+    return {
+      id: session.user.id,
+      email: session.user.email,
+      name: session.user.user_metadata?.name || 'User',
+      role: session.user.user_metadata?.role || 'patient',
+    }
   },
 
   /**
@@ -118,8 +132,16 @@ export const auth = {
           .from('users')
           .select('*')
           .eq('id', session.user.id)
-          .single()
-        callback(userRow || null)
+          .maybeSingle()
+
+        callback(
+          userRow || {
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.user_metadata?.name || 'User',
+            role: session.user.user_metadata?.role || 'patient',
+          }
+        )
       }
     )
     return () => subscription.unsubscribe()
